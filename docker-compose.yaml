@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  builder:
+    build:
+      context: ./
+      args:
+        UID: ${UID}
+      dockerfile: docker/builder/Dockerfile
+    volumes:
+    - "./:/vvc"
+    - "./.cache:/home/dev/.cache"
+    working_dir: /vvc
+  vvc:
+    build:
+      context: ./
+      dockerfile: docker/vvc/Dockerfile
