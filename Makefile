@@ -4,7 +4,7 @@ test: build
 
 .PHONY: sample
 sample: build
-	docker-compose run --rm builder go run cmd/vvc/main.go
+	docker-compose run --rm builder sh -c 'go run cmd/compiler/main.go programs/add.vvb > /tmp/sample && go run cmd/execute/main.go /tmp/sample'
 
 .PHONY: builder-sh
 builder-sh: build

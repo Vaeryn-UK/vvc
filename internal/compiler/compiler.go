@@ -1,8 +1,9 @@
-package core
+package compiler
 
 import (
 	"errors"
 	"fmt"
+	"github.com/vaeryn-uk/vvc/internal/core"
 	"io"
 	"strconv"
 	"unicode"
@@ -10,7 +11,7 @@ import (
 
 type CompileError struct {
 	message string
-	token *token
+	token   *token
 }
 
 func (e *CompileError) Error() string {
@@ -22,31 +23,31 @@ func (e *CompileError) Error() string {
 }
 
 type token struct {
-	token string
-	instruction *Instruction
-	value uint
-	line uint
-	column uint
+	token       string
+	instruction *core.Instruction
+	value       uint
+	line        uint
+	column      uint
 }
 
 func (t *token) IsLabel() bool {
-	return t.token[len(t.token) - 1] == ':'
+	return t.token[len(t.token)-1] == ':'
 }
 
 type Compiler struct {
-	line uint
+	line   uint
 	column uint
-	data Words
+	data   core.Words
 }
 
 func NewCompiler() *Compiler {
 	return new(Compiler)
 }
 
-func (c *Compiler) Compile(code io.ByteReader) (error, Words) {
+func (c *Compiler) Compile(code io.ByteReader) (error, core.Words) {
 	c.line = 1
 
-	data := make(Words, 0)
+	data := make(core.Words, 0)
 
 	for {
 		err, done, line := c.consumeLine(code)
@@ -61,12 +62,12 @@ func (c *Compiler) Compile(code io.ByteReader) (error, Words) {
 		for _, token := range line {
 			if inst == nil {
 				// Expecting label or inst.
-				if token.token[len(token.token) - 1] == ':' {
+				if token.token[len(token.token)-1] == ':' {
 					// Ignore labels for now.
 					continue
 				} else {
 					// Must be an inst.
-					if err, i := LookupInstruction(token.token); err != nil {
+					if err, i := core.LookupInstruction(token.token); err != nil {
 						return c.compileError("Invalid instruction ref `%s`", token, token.token)
 					} else {
 						token.instruction = &i
@@ -77,7 +78,7 @@ func (c *Compiler) Compile(code io.ByteReader) (error, Words) {
 				// Must be args.
 				if val, err := strconv.Atoi(token.token); err != nil {
 					return c.compileError("Arguments must be numeric. Got `%s`", token, token.token)
-				} else if !IsValidWord(val) {
+				} else if !core.IsValidWord(val) {
 					return c.compileError("Invalid representation of word `%s`", token, token.token)
 				} else {
 					token.value = uint(val)
@@ -87,14 +88,14 @@ func (c *Compiler) Compile(code io.ByteReader) (error, Words) {
 		}
 
 		if inst != nil {
-			if uint8(len(args)) != inst.instruction.args {
-				return c.compileError("Instruction `%s` expects %d args. Got %d", inst, inst.token, inst.instruction.args, len(args))
+			if uint8(len(args)) != inst.instruction.ArgCount() {
+				return c.compileError("Instruction `%s` expects %d args. Got %d", inst, inst.token, inst.instruction.ArgCount(), len(args))
 			}
 
-			data = append(data, Word(inst.instruction.opcode))
+			data = append(data, core.Word(inst.instruction.Opcode()))
 
 			for _, arg := range args {
-				data = append(data, Word(arg.value))
+				data = append(data, core.Word(arg.value))
 			}
 		}
 
@@ -112,7 +113,7 @@ func (c *Compiler) Compile(code io.ByteReader) (error, Words) {
 	return nil, data
 }
 
-func (c *Compiler) compileError(msg string, token *token, args ...interface{}) (*CompileError, []Word) {
+func (c *Compiler) compileError(msg string, token *token, args ...interface{}) (*CompileError, []core.Word) {
 	return &CompileError{fmt.Sprintf(msg, args...), token}, nil
 }
 
@@ -122,7 +123,7 @@ func (c *Compiler) consumeLine(code io.ByteReader) (error, bool, []*token) {
 
 	c.line++
 	c.column = 1
-	ignore := false;
+	ignore := false
 
 	tokenize := func(str string) *token {
 		return &token{token: str, line: c.line, column: c.column}

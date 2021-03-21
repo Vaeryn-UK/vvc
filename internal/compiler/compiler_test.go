@@ -1,6 +1,7 @@
-package core
+package compiler
 
 import (
+	"github.com/vaeryn-uk/vvc/internal/core"
 	"reflect"
 	"strings"
 	"testing"
@@ -11,7 +12,7 @@ func TestCompile(t *testing.T) {
 		assertCompilation(
 			t,
 			`start:	ADD	13	15`,
-			[]Word{0x01, 0x0d, 0x0f},
+			[]core.Word{0x01, 0x0d, 0x0f},
 		)
 	})
 
@@ -20,12 +21,12 @@ func TestCompile(t *testing.T) {
 			t,
 			`start:	ADD	13	15 # bar foo comment
 # foo bar comment`,
-			[]Word{0x01, 0x0d, 0x0f},
+			[]core.Word{0x01, 0x0d, 0x0f},
 		)
 	})
 }
 
-func assertCompilation(t *testing.T, input string, expected Words) {
+func assertCompilation(t *testing.T, input string, expected core.Words) {
 	code := strings.NewReader(input)
 	compiler := NewCompiler()
 

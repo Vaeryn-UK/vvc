@@ -13,6 +13,14 @@ type Instruction struct {
 	ref string
 }
 
+func (i *Instruction) Opcode() Opcode {
+	return i.opcode
+}
+
+func (i *Instruction) ArgCount() uint8 {
+	return i.args
+}
+
 var NOOP = Instruction{0, 0, "NOOP"}
 var ADD = Instruction{1, 2, "ADD"}
 var DEBUG = Instruction{2, 0, "DEBUG"}

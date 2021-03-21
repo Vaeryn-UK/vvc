@@ -13,3 +13,6 @@ is included in which will compile `.vvb` files to binary files in a format which
 can be executed on VVC.
 
 See [./programs](./programs) for some examples of `.vvb` files.
+
+The `sample` make target demonstrates compilation of a `.vvb` file followed by
+its execution.
