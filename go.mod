@@ -1,3 +1,3 @@
-module github.com/Vaeryn-UK/vvc
+module github.com/vaeryn-uk/vvc
 
 go 1.16

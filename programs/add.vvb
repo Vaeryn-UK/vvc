@@ -1,0 +1,3 @@
+start:	ADD	13	15
+		DEBUG
+		EXIT
