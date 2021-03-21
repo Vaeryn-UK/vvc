@@ -12,7 +12,7 @@ builder-sh: build
 
 .PHONY: build
 build: .env .cache
-	docker-compose build
+	docker-compose build builder
 
 .cache:
 	mkdir .cache
@@ -20,3 +20,11 @@ build: .env .cache
 .env:
 	cp .env.dist .env
 	sed -i s/UID=USER_ID/UID=$$(id -u)/ .env
+
+.PHONY: vvc-run
+vvc-run: vvc
+	docker-compose run --rm vvc bash
+
+.PHONY: vvc
+vvc: build
+	docker-compose build vvc

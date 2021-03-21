@@ -2,6 +2,7 @@ version: '3'
 
 services:
   builder:
+    image: "vvc-builder"
     build:
       context: ./
       args:
