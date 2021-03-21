@@ -1,6 +1,7 @@
 # Vaeryn Virtual Computer
 
-A hobby project to model a general-purpose computer architecture.
+A hobby project to model a general-purpose computer architecture. A hackathon-style
+project over a weekend. Written in Go.
 
 Requirements: `make`, `docker`, `docker-compose`.
 
@@ -41,13 +42,11 @@ $ execute /tmp/myprogram
 Some rough notes on the architecture:
 * Components:
   * `machine` provides an single interface for creating, booting and operating the computer.
-  * `cpu` which aligns with the CPU in a modern architecture. Executes instructions serially
-    loaded from memory.
+  * `cpu` executes instructions serially loaded from memory. Contains a small number of
+    single word registers.
   * `memory` is a simple I/O interface to randomly access storage.
 * Fixed-length words. A word is 4 bytes, `int32`.
 * Words are the addressable unit in memory.
-* The CPU contains a small number of registers to facilitate computation. Each register stores
-  a single word.
 * Only unsigned integers are supported (for now).
 
 ## Project Layout
@@ -89,3 +88,16 @@ Some checks performed by the compiler are:
   will reject unless its argument is of the form `rX`.
 * All label references are valid.
 * The resulting compiled file is >0 bytes in length.
+
+# Things to do
+* Add programs which utilize memory (don't just use CPU registers)
+* Model memory <-> cpu communication to be asynchronous (`go func` & `chan`s?) to better
+  simulate a physical setup.
+* Device I/O
+  * ISRs
+  * Explore how programs can be loaded in to an already running machine (operating system?)
+  * Basic user input/output
+* More datatypes:
+  * Floating point
+  * Negative numbers
+  * Strings
