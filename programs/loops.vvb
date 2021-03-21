@@ -1,0 +1,10 @@
+		PUT		10		r2		# r3 = loop limit
+		PUT		1		r1		# r2 = loop increment
+		PUT		0		r3		# r3 = loop counter (start at 0)
+		PUT		1		r4		# A < result of the CMP operation in the loop
+loop:	DBG		r3				# Print the current value
+		ADD		r3		r1		# Add increment
+		CPY		r0		r3		# Put result back in register
+		CMP		r3		r2		# Compare current to limit.
+		JEQ		loop	r4		# Jump if comparison result was 1 (i.e. r3 < r2)
+		EXT

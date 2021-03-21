@@ -11,17 +11,42 @@ func TestCompile(t *testing.T) {
 	t.Run("basic-1", func (t *testing.T) {
 		assertCompilation(
 			t,
-			`start:	ADD	13	15`,
-			[]core.Word{0x01, 0x0d, 0x0f},
+			`start:	ADD	r0	r1`,
+			[]core.Word{0x01, 0x00, 0x01},
+		)
+	})
+
+	t.Run("multiline-1", func (t *testing.T) {
+		assertCompilation(
+			t,
+			`
+start:	ADD	r0	r1
+		DBG r0
+`,
+			[]core.Word{0x01, 0x00, 0x01, 0x02, 0x00},
+		)
+	})
+
+	t.Run("whitespace-1", func (t *testing.T) {
+		assertCompilation(
+			t,
+			`
+
+
+start:				ADD	r0	r1
+
+
+`,
+			[]core.Word{0x01, 0x00, 0x01},
 		)
 	})
 
 	t.Run("comments-1", func (t *testing.T) {
 		assertCompilation(
 			t,
-			`start:	ADD	13	15 # bar foo comment
+			`start:	ADD	r0	r1 # bar foo comment
 # foo bar comment`,
-			[]core.Word{0x01, 0x0d, 0x0f},
+			[]core.Word{0x01, 0x00, 0x01},
 		)
 	})
 }

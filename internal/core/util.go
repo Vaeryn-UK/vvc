@@ -7,6 +7,10 @@ import (
 
 type Word uint32
 
+func (w Word) ToString() string {
+	return fmt.Sprintf("0x%x (%d)", w, w)
+}
+
 const bytesInWord = 4
 
 func WordToBytes(w Word) []byte {

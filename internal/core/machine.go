@@ -7,14 +7,14 @@ type Machine struct {
 	cpu *cpu
 }
 
-func NewMachine(memSize uint, cpuFlags map[string]int) *Machine {
+func NewMachine(memSize uint, cpuFlags CpuFlags) *Machine {
 	m := NewMemory(memSize)
 
 	return &Machine{memory: m, cpu: NewCpu(m, cpuFlags)}
 }
 
 func AutoConfigureMachine() *Machine {
-	cpuFlags := make(map[string]int)
+	cpuFlags := make(CpuFlags)
 
 	if os.Getenv("VVC_DEBUG") == "1" {
 		cpuFlags["debug"] = 1
